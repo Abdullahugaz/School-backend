@@ -1,15 +1,21 @@
-const express = require('express');
-const router = express.Router();
-const upload = require('../middleware/upload');
-const auth = require('../middleware/auth');
-const { registerStudent, loginStudent } = require('../controllers/authController');
-const { getAllStudents } = require('../controllers/studentController');
+const express = require('express')
+const Student = require('../models/student')
 
-// Public
-router.post('/register', upload.single('profile_picture'), registerStudent);
-router.post('/login', loginStudent);
+const router = express.Router()
 
-// Protected
-router.get('/', auth, getAllStudents);
+// DELETE student by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    console.log('Delete request for ID:', req.params.id) // debug
 
-module.exports = router;
+    const student = await Student.findByIdAndDelete(req.params.id)
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' })
+    }
+    res.json({ message: 'Student deleted successfully' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+module.exports = router

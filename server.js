@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-
+const authRoutes = require('./routes/authRoutes')
 const studentRoutes = require('./routes/studentRoutes');
 const { PORT, MONGO_URI } = require('./config');
 
@@ -15,12 +15,14 @@ const uploadPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
 
 // Middleware
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 // API routes
+app.use('/api/auth', authRoutes)
 app.use('/api/students', studentRoutes);
 
 // DB connection
