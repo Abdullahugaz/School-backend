@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Student Auth API",
+    "_postman_id": "b8c49f0d-8c41-4f71-a8c0-123456789abc",
+    "description": "Test Student Registration and Login with Plain-text Passwords",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register Student",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "full_name", "value": "Test User", "type": "text" },
+            { "key": "email", "value": "test@example.com", "type": "text" },
+            { "key": "phone", "value": "+25212345678", "type": "text" },
+            { "key": "department", "value": "cs", "type": "text" },
+            { "key": "address", "value": "Mogadishu", "type": "text" },
+            { "key": "password", "value": "12345", "type": "text" },
+            { "key": "status", "value": "submitted", "type": "text" },
+            { "key": "submission_date", "value": "2025-08-06", "type": "text" },
+            { "key": "profile_picture", "src": "/path/to/your/image.jpg", "type": "file" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/students",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "students"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"12345\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
