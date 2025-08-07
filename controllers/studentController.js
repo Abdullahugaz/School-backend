@@ -1,12 +1,9 @@
-const Student = require('../models/student'); // Sequelize model
-const bcrypt = require('bcrypt');
+const Student = require('../models/student')
+const bcrypt = require('bcrypt')
 
-// Create Student
+// CREATE Student
 exports.createStudent = async (req, res) => {
   try {
-    console.log('BODY:', req.body);
-    console.log('FILE:', req.file);
-
     const {
       full_name,
       email,
@@ -16,66 +13,108 @@ exports.createStudent = async (req, res) => {
       password,
       status,
       submission_date
-    } = req.body;
+    } = req.body
 
-    const profile_picture = req.file?.filename;
+    const profile_picture = req.file?.filename || null
 
-    // Validate required fields
-    if (
-      !full_name ||
-      !email ||
-      !phone ||
-      !department ||
-      !address ||
-      !profile_picture ||
-      !status ||
-      !password
-    ) {
-      return res.status(400).json({ error: 'All fields are required, including password.' });
+    if (!full_name || !email || !phone || !department || !address || !status || !password) {
+      return res.status(400).json({ error: 'All fields except profile picture and submission date are required.' })
     }
 
     if (status === 'submitted' && !submission_date) {
-      return res.status(400).json({ error: 'Submission date is required for submitted status.' });
+      return res.status(400).json({ error: 'Submission date is required when status is submitted.' })
     }
 
-    // Check if email already exists
-    const existing = await Student.findOne({ where: { email } });
+    const existing = await Student.findOne({ where: { email } })
     if (existing) {
-      return res.status(400).json({ error: 'Email already registered.' });
+      return res.status(400).json({ error: 'Email already registered.' })
     }
 
-    // Hash password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create new student
     const student = await Student.create({
       full_name,
       email,
       phone,
       department,
       address,
-      profile_picture,
+      password: hashedPassword,
       status,
       submission_date: submission_date ? new Date(submission_date) : null,
-      password: hashedPassword
-    });
+      profile_picture
+    })
 
-    res.status(201).json({ message: 'Student registered successfully', student });
+    res.status(201).json({ message: 'Student registered successfully', student })
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error('Error creating student:', err)
+    res.status(500).json({ error: 'Server error' })
   }
-};
+}
 
-// Get All Students
+// READ all students
 exports.getAllStudents = async (req, res) => {
   try {
     const students = await Student.findAll({
-      order: [['id', 'DESC']],
-      attributes: { exclude: ['password'] }
-    });
-    res.json(students);
+      order: [['createdAt', 'DESC']]
+    })
+    res.json(students)
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching students:', err)
+    res.status(500).json({ error: 'Failed to fetch students' })
   }
-};
+}
+
+// UPDATE student by ID
+exports.updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params
+    const {
+      full_name,
+      email,
+      phone,
+      department,
+      address,
+      status,
+      submission_date
+    } = req.body
+
+    const student = await Student.findByPk(id)
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' })
+    }
+
+    await student.update({
+      full_name,
+      email,
+      phone,
+      department,
+      address,
+      status,
+      submission_date: submission_date ? new Date(submission_date) : null
+    })
+
+    res.json({ message: 'Student updated successfully', student })
+  } catch (err) {
+    console.error('Error updating student:', err)
+    res.status(500).json({ error: 'Failed to update student' })
+  }
+}
+
+// DELETE student by ID
+exports.deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const student = await Student.findByPk(id)
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' })
+    }
+
+    await student.destroy()
+
+    res.json({ message: 'Student deleted successfully' })
+  } catch (err) {
+    console.error('Error deleting student:', err)
+    res.status(500).json({ error: 'Failed to delete student' })
+  }
+}

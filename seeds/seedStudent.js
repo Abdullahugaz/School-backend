@@ -13,7 +13,7 @@ async function insertWizard() {
     await sequelize.sync();
 
     // Check if student already exists
-    const existing = await Student.findOne({ where: { email: 'abdullahugaz@gmail.com' } });
+    const existing = await Student.findOne({ where: { email: 'pp@gmail.com' } });
     if (existing) {
       console.log('⚠️ Student with this email already exists. Skipping insert.');
       return;
@@ -25,7 +25,7 @@ async function insertWizard() {
     // Insert new student
     await Student.create({
       full_name: 'Abdullah Ugaz',
-      email: 'abdullahugaz@gmail.com',
+      email: 'pp@gmail.com',
       phone: '+25212345678',
       department: 'cs',
       address: 'Hodan',

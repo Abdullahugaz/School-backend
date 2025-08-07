@@ -5,9 +5,10 @@ const fs = require('fs');
 const path = require('path');
 const sequelize = require('./config/db');
 
+// Routes
+const studentRoutes = require('./routes/studentRoutes')
 
-const studentRoutes = require('./routes/studentRoutes');
-const authRoutes = require('./routes/authRoutes'); // ✅ Import auth routes
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,8 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadPath));
 
 // API Routes
-app.use('/api/students', studentRoutes);
-app.use('/api/auth', authRoutes); // ✅ Mount authentication routes
+app.use('/api', studentRoutes)
+app.use('/api/auth', authRoutes);
 
 // Start server & connect DB
 (async () => {

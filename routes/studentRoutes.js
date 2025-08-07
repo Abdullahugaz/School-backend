@@ -1,26 +1,18 @@
-const express = require('express');
-const Student = require('../models/student'); // Sequelize model
+const express = require('express')
+const router = express.Router()
+const studentController = require('../controllers/studentController')
+const upload = require('../middleware/upload')
 
-const router = express.Router();
+// POST (create)
+router.post('/students', upload.single('profile_picture'), studentController.createStudent)
 
-// DELETE student by ID
-router.delete('/:id', async (req, res) => {
-  try {
-    console.log('Delete request for ID:', req.params.id);
+// GET (read)
+router.get('/students', studentController.getAllStudents)
 
-    const deletedCount = await Student.destroy({
-      where: { id: req.params.id }
-    });
+// PUT (update)
+router.put('/students/:id', studentController.updateStudent)
 
-    if (deletedCount === 0) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
+// DELETE
+router.delete('/students/:id', studentController.deleteStudent)
 
-    res.json({ message: 'Student deleted successfully' });
-  } catch (err) {
-    console.error('Delete Error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-module.exports = router;
+module.exports = router
