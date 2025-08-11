@@ -19,10 +19,10 @@ async function insertWizard() {
       return;
     }
 
-    // Hash password (recommended)
+   
     const hashedPassword = await bcrypt.hash('123456', 10);
 
-    // Insert new student
+    
     await Student.create({
       full_name: 'Abdullah Ugaz',
       email: 'pp@gmail.com',
